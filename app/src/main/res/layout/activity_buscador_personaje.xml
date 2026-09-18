@@ -34,12 +34,11 @@
         <EditText
             android:id="@+id/edtNombre"
             android:hint="Nombre"
-            android:enabled="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <EditText
-            android:id="@+id/editKi"
+            android:id="@+id/edtKi"
             android:hint="Ki"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
