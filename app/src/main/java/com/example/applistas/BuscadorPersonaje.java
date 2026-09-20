@@ -4,7 +4,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
+import com.bumptech.glide.Glide;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,12 +33,14 @@ public class BuscadorPersonaje extends AppCompatActivity {
     //Java
     EditText edtIdPersonaje, edtNombre, edtKi, edtRaza, edtGenero;
     Button btnBuscarPersonaje, btnReiniciar;
+    ImageView imgPersonaje;
 
     private void loadUi() {
         //Vinculacion
         edtIdPersonaje = findViewById(R.id.edtIdPersonaje);
         btnBuscarPersonaje = findViewById(R.id.btnBuscarPersonaje);
         btnReiniciar = findViewById(R.id.btnReiniciar);
+        imgPersonaje = findViewById(R.id.imgPersonaje);
         edtNombre = findViewById(R.id.edtNombre);
         edtKi = findViewById(R.id.edtKi);
         edtRaza = findViewById(R.id.edtRaza);
@@ -62,6 +66,7 @@ public class BuscadorPersonaje extends AppCompatActivity {
         edtKi.setText("");
         edtRaza.setText("");
         edtGenero.setText("");
+        imgPersonaje.setImageResource(0);
         edtIdPersonaje.requestFocus();
     }
 
@@ -101,6 +106,9 @@ public class BuscadorPersonaje extends AppCompatActivity {
             edtRaza.setText(jsonObject.getString("race"));
             edtGenero.setText(jsonObject.getString("gender"));
             edtKi.setText(jsonObject.getString("ki"));
+            
+            String imageUrl = jsonObject.getString("image");
+            Glide.with(this).load(imageUrl).into(imgPersonaje);
         }catch (Exception e){
             Log.e("Error Json", e.toString());
         }
