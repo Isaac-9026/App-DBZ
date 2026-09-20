@@ -25,6 +25,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <Button
+        android:id="@+id/btnReiniciar"
+        android:text="Reiniciar busqueda"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <LinearLayout
         android:orientation="vertical"
         android:gravity="bottom"

@@ -30,12 +30,13 @@ public class BuscadorPersonaje extends AppCompatActivity {
 
     //Java
     EditText edtIdPersonaje, edtNombre, edtKi, edtRaza, edtGenero;
-    Button btnBuscarPersonaje;
+    Button btnBuscarPersonaje, btnReiniciar;
 
     private void loadUi() {
         //Vinculacion
         edtIdPersonaje = findViewById(R.id.edtIdPersonaje);
         btnBuscarPersonaje = findViewById(R.id.btnBuscarPersonaje);
+        btnReiniciar = findViewById(R.id.btnReiniciar);
         edtNombre = findViewById(R.id.edtNombre);
         edtKi = findViewById(R.id.edtKi);
         edtRaza = findViewById(R.id.edtRaza);
@@ -52,7 +53,17 @@ public class BuscadorPersonaje extends AppCompatActivity {
 
         //Event
         btnBuscarPersonaje.setOnClickListener(view -> { getDataCharacter();});
+        btnReiniciar.setOnClickListener(view -> { reiniciarBusqueda(); });
     } //Oncreate
+
+    private void reiniciarBusqueda() {
+        edtIdPersonaje.setText("");
+        edtNombre.setText("");
+        edtKi.setText("");
+        edtRaza.setText("");
+        edtGenero.setText("");
+        edtIdPersonaje.requestFocus();
+    }
 
     private void getDataCharacter(){
         //Comunicacion con la API de Dragon Ball
@@ -111,13 +122,17 @@ public class BuscadorPersonaje extends AppCompatActivity {
                 String dataError = new String(response.data);
                 try {
                     JSONObject jsonError = new JSONObject(dataError);
-                    Toast.makeText(getApplicationContext(), jsonError.getString("message"), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"Personaje no encontrado", Toast.LENGTH_SHORT).show();
+                    reiniciarBusqueda();
                     Log.e("ErrorWS", dataError);
                 }catch (JSONException ex){
-                    throw new RuntimeException(ex);
+                    Toast.makeText(getApplicationContext(), "Error al procesar la respuesta", Toast.LENGTH_SHORT).show();
+                    reiniciarBusqueda();
                 }
 
             }
+        } else {
+            Toast.makeText(getApplicationContext(), "Error de conexión", Toast.LENGTH_SHORT).show();
         }
     }
 }
