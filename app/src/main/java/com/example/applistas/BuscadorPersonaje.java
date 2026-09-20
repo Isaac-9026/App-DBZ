@@ -1,5 +1,6 @@
 package com.example.applistas;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -22,6 +23,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,19 +34,24 @@ public class BuscadorPersonaje extends AppCompatActivity {
 
     //Java
     EditText edtIdPersonaje, edtNombre, edtKi, edtRaza, edtGenero;
-    Button btnBuscarPersonaje, btnReiniciar;
+    Button btnBuscarPersonaje, btnReiniciar, btnTransformaciones;
     ImageView imgPersonaje;
+    String listaTransformaciones = "";
 
     private void loadUi() {
         //Vinculacion
         edtIdPersonaje = findViewById(R.id.edtIdPersonaje);
         btnBuscarPersonaje = findViewById(R.id.btnBuscarPersonaje);
         btnReiniciar = findViewById(R.id.btnReiniciar);
+        btnTransformaciones = findViewById(R.id.btnTransformaciones);
         imgPersonaje = findViewById(R.id.imgPersonaje);
         edtNombre = findViewById(R.id.edtNombre);
         edtKi = findViewById(R.id.edtKi);
         edtRaza = findViewById(R.id.edtRaza);
         edtGenero = findViewById(R.id.edtGenero);
+        
+        //Abrir el canal de comunicación
+        requestQueue = Volley.newRequestQueue(this);
     }
 
     @Override
@@ -58,6 +65,15 @@ public class BuscadorPersonaje extends AppCompatActivity {
         //Event
         btnBuscarPersonaje.setOnClickListener(view -> { getDataCharacter();});
         btnReiniciar.setOnClickListener(view -> { reiniciarBusqueda(); });
+        btnTransformaciones.setOnClickListener(view -> {
+            if(!listaTransformaciones.isEmpty()) {
+                new AlertDialog.Builder(BuscadorPersonaje.this)
+                        .setTitle("Transformaciones")
+                        .setMessage(listaTransformaciones)
+                        .setPositiveButton("Cerrar", null)
+                        .show();
+            }
+        });
     } //Oncreate
 
     private void reiniciarBusqueda() {
@@ -67,6 +83,8 @@ public class BuscadorPersonaje extends AppCompatActivity {
         edtRaza.setText("");
         edtGenero.setText("");
         imgPersonaje.setImageResource(0);
+        listaTransformaciones = "";
+        btnTransformaciones.setEnabled(false);
         edtIdPersonaje.requestFocus();
     }
 
@@ -78,9 +96,6 @@ public class BuscadorPersonaje extends AppCompatActivity {
             return;
         }
         String endPoint = URL+ edtIdPersonaje.getText().toString(); //Se agrega el ID
-
-        //Abrir el canal de comunicación
-        requestQueue = Volley.newRequestQueue(this);
 
         //¿Qué tipo de dato me devuelve la API?
         //Volley las solicitudes tienen 5 partes
@@ -109,6 +124,26 @@ public class BuscadorPersonaje extends AppCompatActivity {
             
             String imageUrl = jsonObject.getString("image");
             Glide.with(this).load(imageUrl).into(imgPersonaje);
+
+            if (jsonObject.has("transformations")) {
+                JSONArray transformationsArray = jsonObject.getJSONArray("transformations");
+                if (transformationsArray.length() > 0) {
+                    StringBuilder sb = new StringBuilder();
+
+                    for(int i=0; i < transformationsArray.length(); i++) {
+                        JSONObject trans = transformationsArray.getJSONObject(i);
+                        sb.append("- ").append(trans.getString("name")).append("\n");
+                    }
+                    listaTransformaciones = sb.toString();
+                    btnTransformaciones.setEnabled(true);
+                } else{
+                    listaTransformaciones = "";
+                    btnTransformaciones.setEnabled(false);
+                }
+            } else{
+                listaTransformaciones = "";
+                btnTransformaciones.setEnabled(false);
+            }
         }catch (Exception e){
             Log.e("Error Json", e.toString());
         }
