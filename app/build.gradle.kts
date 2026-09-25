@@ -36,6 +36,7 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
     implementation(libs.material)
+    implementation(libs.viewpager2)
     implementation(libs.volley)
     implementation(libs.glide)
     testImplementation(libs.junit)
